@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Acción: Krebs Quest - Juego de Mesa Interactivo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #0a0d14;
+            --bg-card: #121824;
+            --bg-card-hover: #1a2336;
+            --accent-cyan: #00f2fe;
+            --accent-blue: #4facfe;
+            --accent-green: #00ff87;
+            --accent-purple: #7f00ff;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-glow: rgba(0, 242, 254, 0.2);
+            --font-title: 'Orbitron', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header Cyberpunk / Bioquímico */
+        header {
+            position: relative;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(0,242,254,0.1) 0%, rgba(10,13,20,1) 70%);
+            border-bottom: 1px solid var(--border-glow);
+        }
+
+        header h1 {
+            font-family: var(--font-title);
+            font-size: 2.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p.subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+        }
+
+        .meta-item {
+            background: rgba(0, 242, 254, 0.05);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-glow);
+        }
+
+        /* Contenedor Principal */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        /* Sección de Introducción y Tablero Concepto */
+        .grid-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1.8rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 10px 30px rgba(0,242,254,0.15);
+        }
+
+        .card h3 {
+            font-family: var(--font-title);
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Timeline Estilo Línea del Tiempo */
+        .timeline-section-title {
+            text-align: center;
+            font-family: var(--font-title);
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: var(--text-main);
+            letter-spacing: 2px;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple), var(--accent-green));
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            width: 50%;
+            padding-right: 2.5rem;
+            box-sizing: border-box;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+            padding-right: 0;
+            padding-left: 2.5rem;
+        }
+
+        .timeline-node {
+            position: absolute;
+            right: -10px;
+            top: 15px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--bg-main);
+            border: 3px solid var(--accent-cyan);
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: 0 0 10px var(--accent-cyan);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:nth-child(even) .timeline-node {
+            left: -10px;
+        }
+
+        .timeline-content {
+            background-color: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 1.8rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            border-color: var(--accent-blue);
+            background-color: var(--bg-card-hover);
+        }
+
+        .timeline-badge {
+            display: inline-block;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            padding: 0.2rem 0.6rem;
+            background: rgba(79, 172, 254, 0.15);
+            color: var(--accent-blue);
+            border-radius: 4px;
+            margin-bottom: 0.8rem;
+            border: 1px solid rgba(79, 172, 254, 0.3);
+        }
+
+        .timeline-title {
+            font-family: var(--font-title);
+            font-size: 1.2rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-body {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .timeline-body ul {
+            list-style: none;
+            margin-top: 0.8rem;
+        }
+
+        .timeline-body ul li {
+            position: relative;
+            padding-left: 1.2rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .timeline-body ul li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--accent-cyan);
+        }
+
+        /* Simulador de Tablero Interactivo / Ciclo de Krebs */
+        .krebs-simulator {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .krebs-simulator h2 {
+            font-family: var(--font-title);
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .cycle-nodes {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .node-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-main);
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            font-family: var(--font-code);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .node-btn:hover, .node-btn.active {
+            background: var(--accent-cyan);
+            color: var(--bg-main);
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+        }
+
+        .node-detail-box {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            min-height: 100px;
+            text-align: left;
+            border-left: 4px solid var(--accent-cyan);
+        }
+
+        /* Responsividad */
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+            .timeline-item {
+                width: 100%;
+                padding-left: 3rem;
+                padding-right: 0;
+            }
+            .timeline-item:nth-child(even) {
+                left: 0;
+                padding-left: 3rem;
+            }
+            .timeline-node, .timeline-item:nth-child(even) .timeline-node {
+                left: 10px;
+            }
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Plan de Acción: Krebs Quest</h1>
+        <p class="subtitle">Juego de mesa físico modular para el aprendizaje dinámico del Ciclo del Ácido Cítrico en la Matriz Mitocondrial</p>
+        <div class="meta-info">
+            <span class="meta-item">📍 Universidad Autónoma de las Américas</span>
+            <span class="meta-item">🧪 Bioquímica / Biología Celular</span>
+            <span class="meta-item">👤 Desarrollado por: Juan Manuel López (Nox)</span>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- Visión General -->
+        <div class="grid-overview">
+            <div class="card">
+                <h3>⚡ El Concepto</h3>
+                <p>Convertir una ruta metabólica abstracta y memorística en una experiencia lógica y táctil. El jugador "recorre" el camino paso a paso administrando unidades de carbono y cofactores energéticos.</p>
+            </div>
+            <div class="card">
+                <h3>🧩 La Mecánica</h3>
+                <p>Las casillas son sustratos (6C a 4C). Para avanzar, el jugador activa la enzima mediante cartas de preguntas o identificación de reacciones, ganando/gastando fichas de ATP, NADH, FADH2 y CO2.</p>
+            </div>
+            <div class="card">
+                <h3>🩺 Valor Biomédico</h3>
+                <p>Modelado analógico de flujo metabólico (In Silico). Permite entender el impacto de inhibidores enzimáticos (farmacología) y enfermedades metabólicas hereditarias por déficit enzimático.</p>
+            </div>
+        </div>
+
+        <!-- Línea del Tiempo: Plan de Acción -->
+        <h2 class="timeline-section-title">⏱️ LÍNEA DEL TIEMPO & PLAN DE ACCIÓN</h2>
+
+        <div class="timeline">
+
+            <!-- FASE 1 -->
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-content">
+                    <span class="timeline-badge">FASE 01 - SEMANA 1</span>
+                    <h3 class="timeline-title">Investigación & Diseño Teórico</h3>
+                    <div class="timeline-body">
+                        <p>Delimitación del marco bioquímico y estructuración del banco de mecánicas.</p>
+                        <ul>
+                            <li>Definición de las 8 reacciones consecutivas del Ciclo de Krebs.</li>
+                            <li>Redacción de 40 tarjetas de preguntas (Fácil, Medio, Avanzado).</li>
+                            <li>Diseño del balance de cofactores: NADH (+3), FADH2 (+1), GTP/ATP (+1), CO2 (-2).</li>
+                            <li>Bocetado de interfaz gráfica del tablero en vector (Illustrator / Figma).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FASE 2 -->
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-content">
+                    <span class="timeline-badge">FASE 02 - SEMANA 2</span>
+                    <h3 class="timeline-title">Corte de Estructura & Laminación</h3>
+                    <div class="timeline-body">
+                        <p>Construcción del soporte físico de alta durabilidad para el semestre.</p>
+                        <ul>
+                            <li>Corte de base rígida en Madera MDF (40x40 cm, 4mm de grosor).</li>
+                            <li>Impresión de alta resolución en vinilo/cartulina de la ruta circular.</li>
+                            <li>Laminado con Papel Contac transparente para escritura con marcadores borrabes.</li>
+                            <li>Instalación del sistema modular de velcro/imanes para casillas intercambiables.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FASE 3 -->
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-content">
+                    <span class="timeline-badge">FASE 03 - SEMANA 3</span>
+                    <h3 class="timeline-title">Fabricación de Fichas & Componentes</h3>
+                    <div class="timeline-body">
+                        <p>Modelado de piezas físicas e interactivas para los jugadores.</p>
+                        <ul>
+                            <li>Modelado de peones moleculares indicando estados de carbono (6C, 5C, 4C).</li>
+                            <li>Corte y plastificado de tokens energéticos (ATP, NADH, FADH2, CO2).</li>
+                            <li>Impresión y termosellado del mazo de cartas de Inhibición y Regulación.</li>
+                            <li>Ensamble del "Banco de Cofactores" y contenedor de almacenamiento.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FASE 4 -->
+            <div class="timeline-item">
+                <div class="timeline-node"></div>
+                <div class="timeline-content">
+                    <span class="timeline-badge">FASE 04 - SEMANA 4</span>
+                    <h3 class="timeline-title">Pruebas, Calibración & Entrega</h3>
+                    <div class="timeline-body">
+                        <p>Validación didáctica y ajuste final de reglas de juego.</p>
+                        <ul>
+                            <li>Playtesting (partidas de prueba) con compañeros de la facultad.</li>
+                            <li>Ajuste del nivel de dificultad en cartas de inhibición metabólica.</li>
+                            <li>Redacción del manual de reglas impreso en formato folleto técnico.</li>
+                            <li>Presentación y validación final frente a la docente.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Interactive Node Explorer -->
+        <div class="krebs-simulator">
+            <h2>🧪 EXPLORADOR DEL TABLERO (RUTA KREBS)</h2>
+            <p style="color: var(--text-muted);">Haz clic en un intermediario para inspeccionar su enzima y rendimiento esperado en el juego:</p>
+            
+            <div class="cycle-nodes">
+                <button class="node-btn active" onclick="showNode('citrato')">1. Citrato (6C)</button>
+                <button class="node-btn" onclick="showNode('isocitrato')">2. Isocitrato (6C)</button>
+                <button class="node-btn" onclick="showNode('alphacetoglutarato')">3. α-Cetoglutarato (5C)</button>
+                <button class="node-btn" onclick="showNode('succinil')">4. Succinil-CoA (4C)</button>
+                <button class="node-btn" onclick="showNode('succinato')">5. Succinato (4C)</button>
+                <button class="node-btn" onclick="showNode('fumarato')">6. Fumarato (4C)</button>
+                <button class="node-btn" onclick="showNode('malato')">7. Malato (4C)</button>
+                <button class="node-btn" onclick="showNode('oxalacetato')">8. Oxalacetato (4C)</button>
+            </div>
+
+            <div class="node-detail-box" id="node-detail">
+                <h4 style="color: var(--accent-cyan); font-family: var(--font-title);" id="node-title">1. Citrato (6C)</h4>
+                <p id="node-desc" style="margin-top: 0.5rem; font-size: 0.95rem;"><strong>Enzima de paso:</strong> Citrato Sintetasa.<br><strong>Reacción:</strong> Condensación de Acetil-CoA (2C) + Oxalacetato (4C).<br><strong>Rendimiento en el juego:</strong> Inicia la ronda de 6 carbonos.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const nodesData = {
+            citrato: {
+                title: "1. Citrato (6C)",
+                desc: "<strong>Enzima de origen:</strong> Citrato Sintetasa.<br><strong>Reacción:</strong> Condensación del Acetil-CoA (2C) con Oxalacetato (4C).<br><strong>Mecánica del juego:</strong> Casilla de inicio del ciclo. Se entrega el peón de 6 carbonos."
+            },
+            isocitrato: {
+                title: "2. Isocitrato (6C)",
+                desc: "<strong>Enzima de paso:</strong> Aconitasa.<br><strong>Reacción:</strong> Isomerización (deshidratación y rehidratación).<br><strong>Mecánica del juego:</strong> Requiere responder pregunta sobre reordenamiento molecular."
+            },
+            alphacetoglutarato: {
+                title: "3. α-Cetoglutarato (5C)",
+                desc: "<strong>Enzima de paso:</strong> Isocitrato Deshidrogenasa.<br><strong>Reacción:</strong> Descarboxilación oxidativa.<br><strong>Rendimiento en el juego:</strong> 💥 ¡Ganas 1 NADH + 1 CO2! El peón cambia a 5 Carbonos."
+            },
+            succinil: {
+                title: "4. Succinil-CoA (4C)",
+                desc: "<strong>Enzima de paso:</strong> α-Cetoglutarato Deshidrogenasa.<br><strong>Reacción:</strong> Segunda descarboxilación oxidativa.<br><strong>Rendimiento en el juego:</strong> 💥 ¡Ganas 1 NADH + 1 CO2! El peón cambia a 4 Carbonos."
+            },
+            succinato: {
+                title: "5. Succinato (4C)",
+                desc: "<strong>Enzima de paso:</strong> Succinil-CoA Sintetasa.<br><strong>Reacción:</strong> Fosforilación a nivel de sustrato.<br><strong>Rendimiento en el juego:</strong> 💰 ¡Ganas 1 GTP (equivalente a 1 ATP)!"
+            },
+            fumarato: {
+                title: "6. Fumarato (4C)",
+                desc: "<strong>Enzima de paso:</strong> Succinato Deshidrogenasa.<br><strong>Reacción:</strong> Oxidación por flavoproteína.<br><strong>Rendimiento en el juego:</strong> ⚡ ¡Ganas 1 FADH2!"
+            },
+            malato: {
+                title: "7. Malato (4C)",
+                desc: "<strong>Enzima de paso:</strong> Fumarasa.<br><strong>Reacción:</strong> Hidratación del doble enlace.<br><strong>Mecánica del juego:</strong> Se paga 1 token de H2O del banco para cruzar."
+            },
+            oxalacetato: {
+                title: "8. Oxalacetato (4C)",
+                desc: "<strong>Enzima de paso:</strong> Malato Deshidrogenasa.<br><strong>Reacción:</strong> Reoxidación final.<br><strong>Rendimiento en el juego:</strong> 💥 ¡Ganas 1 NADH! El circuito queda listo para el siguiente Acetil-CoA."
+            }
+        };
+
+        function showNode(key) {
+            document.querySelectorAll('.node-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const data = nodesData[key];
+            document.getElementById('node-title').innerHTML = data.title;
+            document.getElementById('node-desc').innerHTML = data.desc;
+        }
+    </script>
+</body>
+</html>
